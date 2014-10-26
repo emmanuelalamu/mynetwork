@@ -1,4 +1,33 @@
 Rails.application.routes.draw do
+  
+  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+  unauthenticated do
+    root to: "home#homepage"
+  end
+  authenticated :user do
+    root to: "home#dashboard", as: :authenticated_root
+  end
+
+  get 'home/about' , as: :about
+
+  get 'home/userlist' , as: :userlist
+
+  get 'profile/:id' => 'home#profile' , as: :profile
+
+  get 'followers/:id' => 'home#follower' , as: :follower
+
+  get 'home/following' , as: :following
+
+  resources :follows
+
+  resources :statuses
+
+  match 'poststatus' => 'statuses#poststatus', :via => [:post], :as => 'poststatus'
+  
+  match 'follow' => 'home#follow', :via => [:post], :as => 'followuser'
+  
+  match 'unfollow' => 'home#unfollow', :via => [:post], :as => 'unfollowuser'
+  
   devise_for :users
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
